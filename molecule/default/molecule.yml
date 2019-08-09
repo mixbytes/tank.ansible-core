@@ -1,0 +1,65 @@
+---
+dependency:
+  name: galaxy
+  options:
+    ignore-certs: true
+    ignore-errors: true
+    role-file: requirements.yml
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+lint:
+  name: yamllint
+platforms:
+  - name: ubuntu1804-monitoring
+    box: ubuntu/bionic64
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+    cpus: 1
+    memory: 512
+  - name: ubuntu1804-producer-1
+    box: ubuntu/bionic64
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+    cpus: 1
+    memory: 512
+  - name: ubuntu1804-boot-1
+    box: ubuntu/bionic64
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+    cpus: 1
+    memory: 512
+provisioner:
+  name: ansible
+  playbooks:
+    converge: playbook.yml
+  config_options:
+    defaults:
+      callback_whitelist: profile_tasks
+      interpreter_python: auto
+      deprecation_warnings: False
+    ssh_connection:
+      pipelining: true
+      # ssh_args: -o ControlPersist=6000s -o ControlMaster=auto -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
+  lint:
+    name: ansible-lint
+    options:
+      exclude:
+        - env
+        - .idea
+      x: ["301,305,306"]
+      force-color: True
+scenario:
+  name: default
+verifier:
+  name: testinfra
+  enabled: False
+  lint:
+    name: flake8

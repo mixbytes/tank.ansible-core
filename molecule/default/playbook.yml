@@ -1,0 +1,19 @@
+---
+- name: Collect facts
+  hosts: all
+  become: true
+  gather_facts: no
+  tasks:
+    - name: Gathering Facts
+      setup:
+
+- name: Converge aggregation node
+  hosts: all
+  become: true
+  vars:
+    lsyncd_master_hostname: ubuntu1804-monitoring
+    lsyncd_slave_hosts:
+      - ubuntu1804-producer-1
+      - ubuntu1804-boot-1
+  roles:
+    - role: tank.ansible-core

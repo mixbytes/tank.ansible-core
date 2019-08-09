@@ -1,0 +1,36 @@
+---
+# defaults file for tank.ansible-sync
+#
+# maximum possible number of directories lsyncd watches.
+# This is a kernel limit which defaults to 8192.
+# Consider raise this number when lsyncd is watching huge number of files.
+lsyncd_inotify_max_watches: 65536
+
+# hostname of lsyncd master. Should be one inventory_hostname in inventory.
+# There's one and only one master host.
+lsyncd_master_hostname:
+
+# filename of ssh private key on master. A new key pair will be generated
+# automatically if the file doesn't exist.
+lsyncd_master_identity_file: /root/.ssh/lsyncd
+
+# list of FQDN hostnames or IP addresses of lsyncd slave hosts.
+# There can be multiple slave hosts.
+lsyncd_slave_hosts: []
+
+bc_name: "haya"
+source_coredumps_path: "/tmp/cores"
+target_coredumps_path: "/var/log/{{ bc_name }}/coredumps/{{ ansible_hostname }}"
+lsyncd_sources_and_targets:
+  - source: "{{ source_coredumps_path }}"
+    target: "{{ target_coredumps_path }}"
+
+# the username on the slave hosts which master uses to login via SSH.
+lsyncd_master_username: lsyncd
+
+# lsyncd parameter tweaks
+lsyncd_settings_status_interval: 10
+lsyncd_sync_delay: 15
+bc_private_interface: enp0s8
+lsyncd_pvt_key_path: keys/lsyncd
+lsyncd_pub_key_path: keys/lsyncd.pub
